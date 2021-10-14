@@ -37,6 +37,11 @@ var app = (function () {
         const unsub = store.subscribe(...callbacks);
         return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
     }
+    function get_store_value(store) {
+        let value;
+        subscribe(store, _ => value = _)();
+        return value;
+    }
     function component_subscribe(component, store, callback) {
         component.$$.on_destroy.push(subscribe(store, callback));
     }
@@ -58,14 +63,11 @@ var app = (function () {
     function element(name) {
         return document.createElement(name);
     }
-    function text$1(data) {
+    function text(data) {
         return document.createTextNode(data);
     }
     function space() {
-        return text$1(' ');
-    }
-    function empty() {
-        return text$1('');
+        return text(' ');
     }
     function listen(node, event, handler, options) {
         node.addEventListener(event, handler, options);
@@ -134,6 +136,16 @@ var app = (function () {
     let current_component;
     function set_current_component(component) {
         current_component = component;
+    }
+    // TODO figure out if we still want to support
+    // shorthand events, or if we want to implement
+    // a real bubbling mechanism
+    function bubble(component, event) {
+        const callbacks = component.$$.callbacks[event.type];
+        if (callbacks) {
+            // @ts-ignore
+            callbacks.slice().forEach(fn => fn.call(this, event));
+        }
     }
 
     const dirty_components = [];
@@ -586,9 +598,9 @@ var app = (function () {
     }
 
     const abbrv = createMapStore({
-      a: 1,
-      b: 2,
-      c: 3
+      a: "st",
+      b: "ch",
+      c: "ran"
     });
     const colors = createMapStore({
       grape: "#bf4f8e",
@@ -662,7 +674,7 @@ var app = (function () {
     		c: function create() {
     			tr = element("tr");
     			label = element("label");
-    			t0 = text$1(t0_value);
+    			t0 = text(t0_value);
     			t1 = space();
     			input = element("input");
     			t2 = space();
@@ -941,7 +953,7 @@ var app = (function () {
     			t1 = space();
     			br = element("br");
     			label = element("label");
-    			t2 = text$1("HEX: ");
+    			t2 = text("HEX: ");
     			input1 = element("input");
     			attr_dev(div0, "class", "shades svelte-ocapyz");
     			add_location(div0, file$1, 27, 2, 782);
@@ -1162,7 +1174,7 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			button = element("button");
-    			t = text$1(t_value);
+    			t = text(t_value);
     			set_style(button, "background", /*value*/ ctx[6]);
     			attr_dev(button, "class", "svelte-g0wp7e");
     			add_location(button, file$2, 16, 6, 397);
@@ -1624,7 +1636,7 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			button = element("button");
-    			t = text$1(t_value);
+    			t = text(t_value);
     			attr_dev(button, "class", "svelte-1sudvj");
     			toggle_class(button, "selected", /*selected*/ ctx[1] === /*tab*/ ctx[6]);
     			add_location(button, file$3, 17, 10, 388);
@@ -3083,28 +3095,54 @@ var app = (function () {
 
     	const moo$1 = moo;
     	const lexer = moo$1.compile({
-    		number: 	{ match: /[0-9]+/, value: str => Number(str) },
-    		lparen:  	"(",
-    		rparen:  	")",
-    		identifier:	/[a-z]+/, //stitchname
-    		separator:	/[,+]/,
-    		ws:     	/[ \t]+/,
-
+    		number: 				{ match: /[0-9]+/, value: str => Number(str) },
+    		lparen:  				"(",
+    		rparen:  				")",
+    		identifier:			/[a-z][a-z-.]*/,
+    		separator:			/[,+]/,
+    		multiplicator:	/[xX×*]/,
+    		ws:     				/[ \t]+/
     	});
     var grammar = {
         Lexer: lexer,
         ParserRules: [
-        {"name": "STITCHES", "symbols": ["STITCH"]},
-        {"name": "STITCHES", "symbols": ["STITCH", "separator", "STITCHES"], "postprocess": data => [data[0], ...data[2]]},
-        {"name": "STITCH", "symbols": ["number", "_", (lexer.has("identifier") ? {type: "identifier"} : identifier)], "postprocess": 
-            ([n, _, i]) => {
+        {"name": "PATTERN", "symbols": ["ROW"], "postprocess": id},
+        {"name": "ROW$subexpression$1", "symbols": ["STITCH"]},
+        {"name": "ROW$subexpression$1", "symbols": ["REPEAT"]},
+        {"name": "ROW$ebnf$1", "symbols": []},
+        {"name": "ROW$ebnf$1$subexpression$1$subexpression$1", "symbols": ["STITCH"]},
+        {"name": "ROW$ebnf$1$subexpression$1$subexpression$1", "symbols": ["REPEAT"]},
+        {"name": "ROW$ebnf$1$subexpression$1", "symbols": ["separator", "ROW$ebnf$1$subexpression$1$subexpression$1"]},
+        {"name": "ROW$ebnf$1", "symbols": ["ROW$ebnf$1", "ROW$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+        {"name": "ROW", "symbols": ["ROW$subexpression$1", "ROW$ebnf$1"], "postprocess": 
+            data => [
+            	...data[0],  //mandatory step
+            	...data[1].map(x => x[1][0]) //optional additional steps [[separator [STEP]].map( _ => STEP)
+            ]
+            },
+        {"name": "REPEAT$ebnf$1", "symbols": []},
+        {"name": "REPEAT$ebnf$1$subexpression$1", "symbols": ["separator", "STITCH"]},
+        {"name": "REPEAT$ebnf$1", "symbols": ["REPEAT$ebnf$1", "REPEAT$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+        {"name": "REPEAT", "symbols": [{"literal":"("}, "_", "STITCH", "REPEAT$ebnf$1", "_", {"literal":")"}, "_", (lexer.has("multiplicator") ? {type: "multiplicator"} : multiplicator), "_", (lexer.has("number") ? {type: "number"} : number)], "postprocess": 
+            data => {
+            	return {
+            		type: "repeat",
+            		stitches: [
+            			data[2], //mandatory stitch
+            			...data[3].map(x => x[1]) //optional additional stitches [[separator STITCH]].map( _ => STITCH)
+            		],
+            		times: data[9].value //%number
+            	}
+            }
+            },
+        {"name": "STITCH", "symbols": [(lexer.has("number") ? {type: "number"} : number), "_", (lexer.has("identifier") ? {type: "identifier"} : identifier)], "postprocess": 
+            data => {
             	return {
             		type: "stitch",
-            		times: n.value,
-            		value: i.value
+            		times: data[0].value, //%number
+            		value: data[2].value  //%identifier
             	}
             }},
-        {"name": "number", "symbols": [(lexer.has("number") ? {type: "number"} : number)], "postprocess": id},
         {"name": "separator", "symbols": ["__"]},
         {"name": "separator", "symbols": ["_", (lexer.has("separator") ? {type: "separator"} : separator), "_"], "postprocess": () => null},
         {"name": "_$ebnf$1", "symbols": []},
@@ -3114,13 +3152,33 @@ var app = (function () {
         {"name": "__$ebnf$1", "symbols": ["__$ebnf$1", (lexer.has("ws") ? {type: "ws"} : ws)], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
         {"name": "__", "symbols": ["__$ebnf$1"], "postprocess": () => null}
     ]
-      , ParserStart: "STITCHES"
+      , ParserStart: "PATTERN"
     };
     {
        module.exports = grammar;
     }
     })();
     });
+
+    let $abbrv = get_store_value(abbrv);
+
+    const interpret = async data => {
+      console.log("start transpile");
+      if (!data.length) return []; //Return if array is empty
+
+      const validate = arr => arr.reduce((all,obj) => {
+        if (obj.type === 'stitch') {
+          let value = $abbrv.values[$abbrv.keys.indexOf(obj.value)]; // Compare stitch value to store and return if valid
+          if (value) return [...all, {...obj, value: value}]
+        }
+        else if (obj.type === 'repeat') {
+          return [...all, {...obj, stitches: validate(obj.stitches)}];
+        }
+        return all
+      },[]);
+      
+      return validate(data);
+    };
 
     /* components\Inputs\TextArea.svelte generated by Svelte v3.43.1 */
 
@@ -3163,16 +3221,17 @@ var app = (function () {
     			append_dev(article, output_1);
     			html_tag.m(/*styled*/ ctx[1], output_1);
     			append_dev(output_1, br);
-    			/*output_1_binding*/ ctx[4](output_1);
+    			/*output_1_binding*/ ctx[5](output_1);
     			append_dev(article, t);
     			append_dev(article, textarea);
     			set_input_value(textarea, /*raw*/ ctx[0]);
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[5]),
+    					listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[6]),
     					listen_dev(textarea, "scroll", /*update_scroll*/ ctx[3], false, false, false),
-    					listen_dev(textarea, "change", /*update_scroll*/ ctx[3], false, false, false)
+    					listen_dev(textarea, "change", /*update_scroll*/ ctx[3], false, false, false),
+    					listen_dev(textarea, "blur", /*blur_handler*/ ctx[4], false, false, false)
     				];
 
     				mounted = true;
@@ -3189,7 +3248,7 @@ var app = (function () {
     		o: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(article);
-    			/*output_1_binding*/ ctx[4](null);
+    			/*output_1_binding*/ ctx[5](null);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -3223,6 +3282,10 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<TextArea> was created with unknown prop '${key}'`);
     	});
 
+    	function blur_handler(event) {
+    		bubble.call(this, $$self, event);
+    	}
+
     	function output_1_binding($$value) {
     		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
     			output = $$value;
@@ -3252,7 +3315,15 @@ var app = (function () {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [raw, styled, output, update_scroll, output_1_binding, textarea_input_handler];
+    	return [
+    		raw,
+    		styled,
+    		output,
+    		update_scroll,
+    		blur_handler,
+    		output_1_binding,
+    		textarea_input_handler
+    	];
     }
 
     class TextArea extends SvelteComponentDev {
@@ -3286,27 +3357,29 @@ var app = (function () {
     }
 
     /* components\Editor.svelte generated by Svelte v3.43.1 */
+
+    const { console: console_1$1 } = globals;
     const file$6 = "components\\Editor.svelte";
 
     function get_each_context$3(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[8] = list[i];
+    	child_ctx[7] = list[i];
     	return child_ctx;
     }
 
     function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[11] = list[i];
+    	child_ctx[10] = list[i];
     	return child_ctx;
     }
 
-    // (48:2) {#each {length:sts.times} as st}
+    // (46:2) {#each {length:sts.times} as st}
     function create_each_block_1(ctx) {
     	let t;
 
     	const block = {
     		c: function create() {
-    			t = text$1("V\r\n  ");
+    			t = text("V\r\n  ");
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t, anchor);
@@ -3320,17 +3393,17 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(48:2) {#each {length:sts.times} as st}",
+    		source: "(46:2) {#each {length:sts.times} as st}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (47:0) {#each pattern as sts}
+    // (45:0) {#each pattern as sts}
     function create_each_block$3(ctx) {
     	let t;
-    	let each_value_1 = { length: /*sts*/ ctx[8].times };
+    	let each_value_1 = { length: /*sts*/ ctx[7].times };
     	validate_each_argument(each_value_1);
     	let each_blocks = [];
 
@@ -3344,7 +3417,7 @@ var app = (function () {
     				each_blocks[i].c();
     			}
 
-    			t = text$1("|");
+    			t = text("|");
     		},
     		m: function mount(target, anchor) {
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -3356,7 +3429,7 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			if (dirty & /*pattern*/ 1) {
     				const old_length = each_value_1.length;
-    				each_value_1 = { length: /*sts*/ ctx[8].times };
+    				each_value_1 = { length: /*sts*/ ctx[7].times };
     				validate_each_argument(each_value_1);
     				let i;
 
@@ -3387,7 +3460,7 @@ var app = (function () {
     		block,
     		id: create_each_block$3.name,
     		type: "each",
-    		source: "(47:0) {#each pattern as sts}",
+    		source: "(45:0) {#each pattern as sts}",
     		ctx
     	});
 
@@ -3399,8 +3472,10 @@ var app = (function () {
     	let textarea;
     	let updating_raw;
     	let updating_styled;
-    	let t;
-    	let each_1_anchor;
+    	let t0;
+    	let t1;
+    	let t2;
+    	let pre;
     	let current;
 
     	function textarea_raw_binding(value) {
@@ -3424,7 +3499,7 @@ var app = (function () {
     	textarea = new TextArea({ props: textarea_props, $$inline: true });
     	binding_callbacks.push(() => bind(textarea, 'raw', textarea_raw_binding));
     	binding_callbacks.push(() => bind(textarea, 'styled', textarea_styled_binding));
-    	textarea.$on("blur", /*update*/ ctx[3]);
+    	textarea.$on("blur", /*parse*/ ctx[3]);
     	let each_value = /*pattern*/ ctx[0];
     	validate_each_argument(each_value);
     	let each_blocks = [];
@@ -3437,15 +3512,18 @@ var app = (function () {
     		c: function create() {
     			section = element("section");
     			create_component(textarea.$$.fragment);
-    			t = space();
+    			t0 = text("\r\n  ** Only highlighted text will be taken into account **");
+    			t1 = space();
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			each_1_anchor = empty();
-    			attr_dev(section, "class", "svelte-1fum03w");
-    			add_location(section, file$6, 41, 0, 1245);
+    			t2 = space();
+    			pre = element("pre");
+    			attr_dev(section, "class", "svelte-10izwjw");
+    			add_location(section, file$6, 39, 0, 1124);
+    			add_location(pre, file$6, 49, 0, 1372);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3453,13 +3531,15 @@ var app = (function () {
     		m: function mount(target, anchor) {
     			insert_dev(target, section, anchor);
     			mount_component(textarea, section, null);
-    			insert_dev(target, t, anchor);
+    			append_dev(section, t0);
+    			insert_dev(target, t1, anchor);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].m(target, anchor);
     			}
 
-    			insert_dev(target, each_1_anchor, anchor);
+    			insert_dev(target, t2, anchor);
+    			insert_dev(target, pre, anchor);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -3492,7 +3572,7 @@ var app = (function () {
     					} else {
     						each_blocks[i] = create_each_block$3(child_ctx);
     						each_blocks[i].c();
-    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
+    						each_blocks[i].m(t2.parentNode, t2);
     					}
     				}
 
@@ -3515,9 +3595,10 @@ var app = (function () {
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(section);
     			destroy_component(textarea);
-    			if (detaching) detach_dev(t);
+    			if (detaching) detach_dev(t1);
     			destroy_each(each_blocks, detaching);
-    			if (detaching) detach_dev(each_1_anchor);
+    			if (detaching) detach_dev(t2);
+    			if (detaching) detach_dev(pre);
     		}
     	};
 
@@ -3539,33 +3620,31 @@ var app = (function () {
     	let input_raw = '';
     	let input_styled = '';
 
+    	//Plan:
+    	// On input => async feed to the parser
+    	// parser results sent to prettify, which marks and recompose into input_styled
+    	//parser results sent to view
     	const highlight = str => {
-    		return str.replace(/[^\w\s.-]/gi, ' ').replace(/[a-z][a-z -.]*[a-z.]|[a-z]/gi, x => {
+    		return str.replace(/[^\w\s.-]/gi, ' ').replace(/[\d]+[ \t]*[a-z][a-z-.]*/gi, x => {
     			//1) check if valid abbrv
     			//2) mark
-    			return `<mark>${x}</mark>`; //prevent user accidently creating tags
+    			return `<mark class='stitch'>${x}</mark>`; //prevent user accidently creating tags
     		});
     	};
 
-    	let parserresults = [];
-
-    	// let editor;
-    	//
-    	// const parse_html = () => {
-    	//   const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
-    	//   parser.feed(editor.textContent.trim());
-    	//   if (parser.results.length) pattern = parser.results.pattern;
-    	// };
-    	const update = str => {
+    	const parse = async _ => {
+    		console.log("start parse");
     		let parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
-    		parser.feed(text);
+    		parser.feed(input_raw);
     		$$invalidate(0, pattern = parser.results[0]);
-    	}; // highlight();
+    		let data = await interpret(parser.results[0]);
+    		console.log(data);
+    	};
 
     	const writable_props = ['pattern'];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Editor> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$1.warn(`<Editor> was created with unknown prop '${key}'`);
     	});
 
     	function textarea_raw_binding(value) {
@@ -3585,20 +3664,19 @@ var app = (function () {
     	$$self.$capture_state = () => ({
     		nearley,
     		grammar,
+    		interpret,
     		TextArea,
     		pattern,
     		input_raw,
     		input_styled,
     		highlight,
-    		parserresults,
-    		update
+    		parse
     	});
 
     	$$self.$inject_state = $$props => {
     		if ('pattern' in $$props) $$invalidate(0, pattern = $$props.pattern);
     		if ('input_raw' in $$props) $$invalidate(1, input_raw = $$props.input_raw);
     		if ('input_styled' in $$props) $$invalidate(2, input_styled = $$props.input_styled);
-    		if ('parserresults' in $$props) parserresults = $$props.parserresults;
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -3615,7 +3693,7 @@ var app = (function () {
     		pattern,
     		input_raw,
     		input_styled,
-    		update,
+    		parse,
     		textarea_raw_binding,
     		textarea_styled_binding
     	];
@@ -3637,7 +3715,7 @@ var app = (function () {
     		const props = options.props || {};
 
     		if (/*pattern*/ ctx[0] === undefined && !('pattern' in props)) {
-    			console.warn("<Editor> was created without expected prop 'pattern'");
+    			console_1$1.warn("<Editor> was created without expected prop 'pattern'");
     		}
     	}
 
