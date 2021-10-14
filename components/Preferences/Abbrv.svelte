@@ -1,5 +1,5 @@
 <script>
-  import { abbrv } from "../../store.js";
+  import { abbrv } from "../../scripts/store.js";
   const set_abbrv = evt => {
     //TODO :sanitize input, check for duplicates;
     $abbrv.set(evt.target.name, evt.target.value);
@@ -7,7 +7,7 @@
 </script>
 
 <section>
-  <p> Here are the standard abbreviation used by the app, but feel free to  input your own.</p>
+  <p> Here are the standard abbreviations used by the app, but feel free to  input your own.</p>
   <img alt=''/>
   <div>
     <select name="conventions">
@@ -23,3 +23,15 @@
     </table>
   </div>
 </section>
+
+<style>
+  section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+  }
+  p {
+    grid-column: span 2;
+  }
+</style>

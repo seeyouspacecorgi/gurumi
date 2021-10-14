@@ -1,0 +1,42 @@
+* {
+  box-sizing: border-box;
+}
+html {
+  --font-highlight: 'Noto Sans Mono';
+  --font-text: 'Noto Sans';
+  --ui-background: white;
+  --ui-border: black;
+  font-family: var(--font-text);
+  background-color: var(--ui-background);
+  line-height: 1.2rem;
+}
+
+button, input {
+  background: transparent;
+  border: solid 2px var(--ui-border);
+  border-radius: 0.25rem;
+}
+
+
+/*SLIDER FIXES*/
+input[type="range"]::-webkit-slider-runnable-track{
+  background: transparent
+}
+input[type="range"]::-moz-range-track {
+  background: transparent
+}
+input[type=range]::-ms-fill-lower {
+  background: transparent
+}
+input[type=range]::-ms-fill-upper {
+  background: transparent
+}
+input[type="range"]::-ms-track {
+  background: transparent
+}
+input[type="range"]::-webkit-slider-thumb {
+  background: currentColor
+}
+input[type="range"]::-moz-range-thumb {
+  background: currentColor
+}

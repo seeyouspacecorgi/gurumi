@@ -1,10 +1,10 @@
-// this file will not afect the sandbox but will
-// afect the deployment and dowload
-
 import svelte from "rollup-plugin-svelte";
 import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 import { terser } from "rollup-plugin-terser";
+import postcssImport from 'postcss-import';
+import autoprefixer from 'autoprefixer';
+import sveltePreprocess from 'svelte-preprocess';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -20,6 +20,14 @@ export default {
     svelte({
       // enable run-time checks when not in production
       dev: !production,
+      preprocess: sveltePreprocess({
+        postcss:{
+          plugins: [
+            autoprefixer(),
+            postcssImport()
+          ]
+        },
+      }),
       // we'll extract any component CSS out into
       // a separate file — better for performance
       css: css => {
