@@ -1,3 +1,5 @@
+@import "./assets/fonts/crochet-embedded.css";
+
 * {
   box-sizing: border-box;
 }
@@ -6,12 +8,13 @@ html {
   --font-text: 'Noto Sans';
   --ui-background: white;
   --ui-border: black;
-  --mark-purple: #ce97fb;
-  --mark-pink: #fa65eb;
-  --mark-orange: #faa99d;
-  --mark-yellow: #fddf7e;
-  --mark-green: #9bfbe1;
-  --mark-blue: #67ebfa;
+  --ui-radius: 0.25rem;
+  --purple: #ce97fb;
+  --pink: #fa65eb;
+  --orange: #faa99d;
+  --yellow: #fddf7e;
+  --green: #9bfbe1;
+  --blue: #67ebfa;
   font-family: var(--font-text);
   background-color: var(--ui-background);
   line-height: 1.2rem;
@@ -20,14 +23,14 @@ html {
 button, input {
   background: transparent;
   border: solid 2px var(--ui-border);
-  border-radius: 0.25rem;
+  border-radius: var(--ui-radius);
 }
 
 mark.stitch {
-  background-color: var(--mark-green);
+  background-color: var(--green);
 }
 mark.repeat {
-  background-color: var(--mark-purple);
+  background-color: var(--purple);
 }
 
 
