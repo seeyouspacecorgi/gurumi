@@ -12,6 +12,7 @@
 <article>
   <output bind:this={output}>{@html styled}<br/></output>
   <textarea bind:value={raw} spellcheck="false" wrap="soft" on:scroll={update_scroll} on:change={update_scroll} on:blur></textarea>
+  <textarea bind:value={raw} spellcheck="false" on:scroll={update_scroll} on:change={update_scroll} on:blur></textarea>
 </article>
 
 <style>

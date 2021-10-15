@@ -26,6 +26,9 @@ button, input {
 mark.stitch {
   background-color: var(--mark-green);
 }
+mark.repeat {
+  background-color: var(--mark-purple);
+}
 
 
 /*SLIDER FIXES*/

@@ -30,7 +30,9 @@ REPEAT -> "(" _ STITCH (separator STITCH):*  _ ")" _ %multiplicator _ %number {%
 				data[2], //mandatory stitch
 				...data[3].map(x => x[1]) //optional additional stitches [[separator STITCH]].map( _ => STITCH)
 			],
-			times: data[9].value //%number
+			times: data[9].value, //%number
+			col: data[0].col,
+			offset: data[9].col - data[0].col + data[9].text.length // endcol - startcol + endlength = total length
 		}
 	}
 %}
@@ -40,7 +42,9 @@ STITCH -> %number _ %identifier {%
 				return {
 					type: "stitch",
 					times: data[0].value, //%number
-					value: data[2].value  //%identifier
+					value: data[2].value,  //%identifier
+					col: data[0].col,
+					offset: data[2].col - data[0].col + data[2].text.length // endcol - startcol + endlength = total length
 				}
 			}%}
 
