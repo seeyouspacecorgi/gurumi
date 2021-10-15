@@ -11,13 +11,10 @@ const parse = async _ => {
     console.log("start parse")
     let parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
     parser.feed(input_raw);
-    pattern = parser.results[0];
-    let data = await interpret(parser.results[0]);
-    console.log(data);
+    pattern = await interpret(parser.results[0]);
   };
 </script>
 <section>
-  <TextArea bind:raw={input_raw} bind:styled={input_styled} on:blur={update}/>
   <TextArea bind:raw={input_raw} bind:styled={input_styled} on:blur={parse}/>
 </section>
 <style>

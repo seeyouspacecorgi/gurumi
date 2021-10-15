@@ -6,6 +6,12 @@ html {
   --font-text: 'Noto Sans';
   --ui-background: white;
   --ui-border: black;
+  --mark-purple: #ce97fb;
+  --mark-pink: #fa65eb;
+  --mark-orange: #faa99d;
+  --mark-yellow: #fddf7e;
+  --mark-green: #9bfbe1;
+  --mark-blue: #67ebfa;
   font-family: var(--font-text);
   background-color: var(--ui-background);
   line-height: 1.2rem;
@@ -15,6 +21,10 @@ button, input {
   background: transparent;
   border: solid 2px var(--ui-border);
   border-radius: 0.25rem;
+}
+
+mark.stitch {
+  background-color: var(--mark-green);
 }
 
 

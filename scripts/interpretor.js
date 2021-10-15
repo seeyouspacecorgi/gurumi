@@ -4,7 +4,7 @@ let $abbrv = get(abbrv);
 
 export const interpret = async data => {
   console.log("start transpile");
-  if (!data.length) return []; //Return if array is empty
+  if (!data || !data.length) return []; //Return if array is empty
 
   const validate = arr => arr.reduce((all,obj) => {
     if (obj.type === 'stitch') {
@@ -16,6 +16,6 @@ export const interpret = async data => {
     }
     return all
   },[]);
-  
+
   return validate(data);
 }

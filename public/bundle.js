@@ -69,6 +69,9 @@ var app = (function () {
     function space() {
         return text(' ');
     }
+    function empty() {
+        return text('');
+    }
     function listen(node, event, handler, options) {
         node.addEventListener(event, handler, options);
         return () => node.removeEventListener(event, handler, options);
@@ -598,9 +601,14 @@ var app = (function () {
     }
 
     const abbrv = createMapStore({
-      a: "st",
-      b: "ch",
-      c: "ran"
+      ml: 'ml',
+      mc: 'mc',
+      ms: 'ms',
+      // 'demi-b': 'demi-b.',
+      bs: 'bs',
+      db: 'db',
+      aug: 'aug',
+      dim: 'dim'
     });
     const colors = createMapStore({
       grape: "#bf4f8e",
@@ -1825,25 +1833,417 @@ var app = (function () {
 
     const file$4 = "components\\View.svelte";
 
+    function get_each_context$3(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[1] = list[i];
+    	return child_ctx;
+    }
+
+    function get_each_context_1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[4] = list[i];
+    	child_ctx[6] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_2(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[7] = list[i];
+    	return child_ctx;
+    }
+
+    function get_each_context_3(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[4] = list[i];
+    	child_ctx[11] = i;
+    	return child_ctx;
+    }
+
+    // (15:4) {:else}
+    function create_else_block(ctx) {
+    	let i;
+    	let i_class_value;
+
+    	const block = {
+    		c: function create() {
+    			i = element("i");
+    			attr_dev(i, "class", i_class_value = "icon-" + /*step*/ ctx[1].value);
+    			add_location(i, file$4, 15, 6, 329);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, i, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*pattern*/ 1 && i_class_value !== (i_class_value = "icon-" + /*step*/ ctx[1].value)) {
+    				attr_dev(i, "class", i_class_value);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(i);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(15:4) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (9:4) {#if step.type === 'repeat'}
+    function create_if_block$2(ctx) {
+    	let each_1_anchor;
+    	let each_value_2 = /*step*/ ctx[1].stitches;
+    	validate_each_argument(each_value_2);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_2.length; i += 1) {
+    		each_blocks[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			each_1_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(target, anchor);
+    			}
+
+    			insert_dev(target, each_1_anchor, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*pattern*/ 1) {
+    				each_value_2 = /*step*/ ctx[1].stitches;
+    				validate_each_argument(each_value_2);
+    				let i;
+
+    				for (i = 0; i < each_value_2.length; i += 1) {
+    					const child_ctx = get_each_context_2(ctx, each_value_2, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block_2(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value_2.length;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(each_1_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$2.name,
+    		type: "if",
+    		source: "(9:4) {#if step.type === 'repeat'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (11:8) {#each {length:st.times} as _, j}
+    function create_each_block_3(ctx) {
+    	let i;
+    	let i_class_value;
+
+    	const block = {
+    		c: function create() {
+    			i = element("i");
+    			attr_dev(i, "class", i_class_value = "icon-" + /*st*/ ctx[7].value);
+    			add_location(i, file$4, 11, 10, 245);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, i, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*pattern*/ 1 && i_class_value !== (i_class_value = "icon-" + /*st*/ ctx[7].value)) {
+    				attr_dev(i, "class", i_class_value);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(i);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_3.name,
+    		type: "each",
+    		source: "(11:8) {#each {length:st.times} as _, j}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (10:6) {#each step.stitches as st}
+    function create_each_block_2(ctx) {
+    	let each_1_anchor;
+    	let each_value_3 = { length: /*st*/ ctx[7].times };
+    	validate_each_argument(each_value_3);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_3.length; i += 1) {
+    		each_blocks[i] = create_each_block_3(get_each_context_3(ctx, each_value_3, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			each_1_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(target, anchor);
+    			}
+
+    			insert_dev(target, each_1_anchor, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*pattern*/ 1) {
+    				each_value_3 = { length: /*st*/ ctx[7].times };
+    				validate_each_argument(each_value_3);
+    				let i;
+
+    				for (i = 0; i < each_value_3.length; i += 1) {
+    					const child_ctx = get_each_context_3(ctx, each_value_3, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block_3(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value_3.length;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(each_1_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_2.name,
+    		type: "each",
+    		source: "(10:6) {#each step.stitches as st}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (8:2) {#each {length:step.times} as _, i}
+    function create_each_block_1(ctx) {
+    	let t;
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*step*/ ctx[1].type === 'repeat') return create_if_block$2;
+    		return create_else_block;
+    	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block = current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
+    			if_block.c();
+    			t = space();
+    		},
+    		m: function mount(target, anchor) {
+    			if_block.m(target, anchor);
+    			insert_dev(target, t, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(t.parentNode, t);
+    				}
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if_block.d(detaching);
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_1.name,
+    		type: "each",
+    		source: "(8:2) {#each {length:step.times} as _, i}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (7:0) {#each pattern as step}
+    function create_each_block$3(ctx) {
+    	let t;
+    	let each_value_1 = { length: /*step*/ ctx[1].times };
+    	validate_each_argument(each_value_1);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = text("|");
+    		},
+    		m: function mount(target, anchor) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(target, anchor);
+    			}
+
+    			insert_dev(target, t, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*pattern*/ 1) {
+    				each_value_1 = { length: /*step*/ ctx[1].times };
+    				validate_each_argument(each_value_1);
+    				let i;
+
+    				for (i = 0; i < each_value_1.length; i += 1) {
+    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block_1(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(t.parentNode, t);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value_1.length;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block$3.name,
+    		type: "each",
+    		source: "(7:0) {#each pattern as step}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
     function create_fragment$4(ctx) {
     	let section;
+    	let each_value = /*pattern*/ ctx[0];
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block$3(get_each_context$3(ctx, each_value, i));
+    	}
 
     	const block = {
     		c: function create() {
     			section = element("section");
-    			add_location(section, file$4, 4, 0, 46);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			add_location(section, file$4, 5, 0, 48);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, section, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(section, null);
+    			}
     		},
-    		p: noop,
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*pattern*/ 1) {
+    				each_value = /*pattern*/ ctx[0];
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context$3(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block$3(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(section, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
+    		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(section);
+    			destroy_each(each_blocks, detaching);
     		}
     	};
 
@@ -3164,7 +3564,7 @@ var app = (function () {
 
     const interpret = async data => {
       console.log("start transpile");
-      if (!data.length) return []; //Return if array is empty
+      if (!data || !data.length) return []; //Return if array is empty
 
       const validate = arr => arr.reduce((all,obj) => {
         if (obj.type === 'stitch') {
@@ -3176,7 +3576,7 @@ var app = (function () {
         }
         return all
       },[]);
-      
+
       return validate(data);
     };
 
@@ -3361,121 +3761,12 @@ var app = (function () {
     const { console: console_1$1 } = globals;
     const file$6 = "components\\Editor.svelte";
 
-    function get_each_context$3(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[7] = list[i];
-    	return child_ctx;
-    }
-
-    function get_each_context_1(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[10] = list[i];
-    	return child_ctx;
-    }
-
-    // (46:2) {#each {length:sts.times} as st}
-    function create_each_block_1(ctx) {
-    	let t;
-
-    	const block = {
-    		c: function create() {
-    			t = text("V\r\n  ");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, t, anchor);
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(t);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_1.name,
-    		type: "each",
-    		source: "(46:2) {#each {length:sts.times} as st}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (45:0) {#each pattern as sts}
-    function create_each_block$3(ctx) {
-    	let t;
-    	let each_value_1 = { length: /*sts*/ ctx[7].times };
-    	validate_each_argument(each_value_1);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value_1.length; i += 1) {
-    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
-    	}
-
-    	const block = {
-    		c: function create() {
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			t = text("|");
-    		},
-    		m: function mount(target, anchor) {
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(target, anchor);
-    			}
-
-    			insert_dev(target, t, anchor);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*pattern*/ 1) {
-    				const old_length = each_value_1.length;
-    				each_value_1 = { length: /*sts*/ ctx[7].times };
-    				validate_each_argument(each_value_1);
-    				let i;
-
-    				for (i = old_length; i < each_value_1.length; i += 1) {
-    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
-
-    					if (!each_blocks[i]) {
-    						each_blocks[i] = create_each_block_1(child_ctx);
-    						each_blocks[i].c();
-    						each_blocks[i].m(t.parentNode, t);
-    					}
-    				}
-
-    				for (i = each_value_1.length; i < old_length; i += 1) {
-    					each_blocks[i].d(1);
-    				}
-
-    				each_blocks.length = each_value_1.length;
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			destroy_each(each_blocks, detaching);
-    			if (detaching) detach_dev(t);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block$3.name,
-    		type: "each",
-    		source: "(45:0) {#each pattern as sts}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
     function create_fragment$6(ctx) {
     	let section;
     	let textarea;
     	let updating_raw;
     	let updating_styled;
-    	let t0;
-    	let t1;
-    	let t2;
-    	let pre;
+    	let t;
     	let current;
 
     	function textarea_raw_binding(value) {
@@ -3488,42 +3779,26 @@ var app = (function () {
 
     	let textarea_props = {};
 
-    	if (/*input_raw*/ ctx[1] !== void 0) {
-    		textarea_props.raw = /*input_raw*/ ctx[1];
+    	if (/*input_raw*/ ctx[0] !== void 0) {
+    		textarea_props.raw = /*input_raw*/ ctx[0];
     	}
 
-    	if (/*input_styled*/ ctx[2] !== void 0) {
-    		textarea_props.styled = /*input_styled*/ ctx[2];
+    	if (/*input_styled*/ ctx[1] !== void 0) {
+    		textarea_props.styled = /*input_styled*/ ctx[1];
     	}
 
     	textarea = new TextArea({ props: textarea_props, $$inline: true });
     	binding_callbacks.push(() => bind(textarea, 'raw', textarea_raw_binding));
     	binding_callbacks.push(() => bind(textarea, 'styled', textarea_styled_binding));
-    	textarea.$on("blur", /*parse*/ ctx[3]);
-    	let each_value = /*pattern*/ ctx[0];
-    	validate_each_argument(each_value);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block$3(get_each_context$3(ctx, each_value, i));
-    	}
+    	textarea.$on("blur", /*parse*/ ctx[2]);
 
     	const block = {
     		c: function create() {
     			section = element("section");
     			create_component(textarea.$$.fragment);
-    			t0 = text("\r\n  ** Only highlighted text will be taken into account **");
-    			t1 = space();
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			t2 = space();
-    			pre = element("pre");
+    			t = text("\r\n  ** Only highlighted text will be taken into account **");
     			attr_dev(section, "class", "svelte-10izwjw");
-    			add_location(section, file$6, 39, 0, 1124);
-    			add_location(pre, file$6, 49, 0, 1372);
+    			add_location(section, file$6, 36, 0, 1101);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3531,57 +3806,25 @@ var app = (function () {
     		m: function mount(target, anchor) {
     			insert_dev(target, section, anchor);
     			mount_component(textarea, section, null);
-    			append_dev(section, t0);
-    			insert_dev(target, t1, anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(target, anchor);
-    			}
-
-    			insert_dev(target, t2, anchor);
-    			insert_dev(target, pre, anchor);
+    			append_dev(section, t);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
     			const textarea_changes = {};
 
-    			if (!updating_raw && dirty & /*input_raw*/ 2) {
+    			if (!updating_raw && dirty & /*input_raw*/ 1) {
     				updating_raw = true;
-    				textarea_changes.raw = /*input_raw*/ ctx[1];
+    				textarea_changes.raw = /*input_raw*/ ctx[0];
     				add_flush_callback(() => updating_raw = false);
     			}
 
-    			if (!updating_styled && dirty & /*input_styled*/ 4) {
+    			if (!updating_styled && dirty & /*input_styled*/ 2) {
     				updating_styled = true;
-    				textarea_changes.styled = /*input_styled*/ ctx[2];
+    				textarea_changes.styled = /*input_styled*/ ctx[1];
     				add_flush_callback(() => updating_styled = false);
     			}
 
     			textarea.$set(textarea_changes);
-
-    			if (dirty & /*pattern*/ 1) {
-    				each_value = /*pattern*/ ctx[0];
-    				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context$3(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    					} else {
-    						each_blocks[i] = create_each_block$3(child_ctx);
-    						each_blocks[i].c();
-    						each_blocks[i].m(t2.parentNode, t2);
-    					}
-    				}
-
-    				for (; i < each_blocks.length; i += 1) {
-    					each_blocks[i].d(1);
-    				}
-
-    				each_blocks.length = each_value.length;
-    			}
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -3595,10 +3838,6 @@ var app = (function () {
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(section);
     			destroy_component(textarea);
-    			if (detaching) detach_dev(t1);
-    			destroy_each(each_blocks, detaching);
-    			if (detaching) detach_dev(t2);
-    			if (detaching) detach_dev(pre);
     		}
     	};
 
@@ -3617,7 +3856,7 @@ var app = (function () {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Editor', slots, []);
     	let { pattern } = $$props;
-    	let input_raw = '';
+    	let input_raw = '(3ms 4ms) * 3';
     	let input_styled = '';
 
     	//Plan:
@@ -3636,9 +3875,8 @@ var app = (function () {
     		console.log("start parse");
     		let parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
     		parser.feed(input_raw);
-    		$$invalidate(0, pattern = parser.results[0]);
-    		let data = await interpret(parser.results[0]);
-    		console.log(data);
+    		$$invalidate(3, pattern = await interpret(parser.results[0]));
+    		console.log(pattern);
     	};
 
     	const writable_props = ['pattern'];
@@ -3649,16 +3887,16 @@ var app = (function () {
 
     	function textarea_raw_binding(value) {
     		input_raw = value;
-    		$$invalidate(1, input_raw);
+    		$$invalidate(0, input_raw);
     	}
 
     	function textarea_styled_binding(value) {
     		input_styled = value;
-    		($$invalidate(2, input_styled), $$invalidate(1, input_raw));
+    		($$invalidate(1, input_styled), $$invalidate(0, input_raw));
     	}
 
     	$$self.$$set = $$props => {
-    		if ('pattern' in $$props) $$invalidate(0, pattern = $$props.pattern);
+    		if ('pattern' in $$props) $$invalidate(3, pattern = $$props.pattern);
     	};
 
     	$$self.$capture_state = () => ({
@@ -3674,9 +3912,9 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('pattern' in $$props) $$invalidate(0, pattern = $$props.pattern);
-    		if ('input_raw' in $$props) $$invalidate(1, input_raw = $$props.input_raw);
-    		if ('input_styled' in $$props) $$invalidate(2, input_styled = $$props.input_styled);
+    		if ('pattern' in $$props) $$invalidate(3, pattern = $$props.pattern);
+    		if ('input_raw' in $$props) $$invalidate(0, input_raw = $$props.input_raw);
+    		if ('input_styled' in $$props) $$invalidate(1, input_styled = $$props.input_styled);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -3684,16 +3922,16 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*input_raw*/ 2) {
-    			 $$invalidate(2, input_styled = highlight(input_raw));
+    		if ($$self.$$.dirty & /*input_raw*/ 1) {
+    			 $$invalidate(1, input_styled = highlight(input_raw));
     		}
     	};
 
     	return [
-    		pattern,
     		input_raw,
     		input_styled,
     		parse,
+    		pattern,
     		textarea_raw_binding,
     		textarea_styled_binding
     	];
@@ -3702,7 +3940,7 @@ var app = (function () {
     class Editor extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$6, create_fragment$6, safe_not_equal, { pattern: 0 });
+    		init(this, options, instance$6, create_fragment$6, safe_not_equal, { pattern: 3 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -3714,7 +3952,7 @@ var app = (function () {
     		const { ctx } = this.$$;
     		const props = options.props || {};
 
-    		if (/*pattern*/ ctx[0] === undefined && !('pattern' in props)) {
+    		if (/*pattern*/ ctx[3] === undefined && !('pattern' in props)) {
     			console_1$1.warn("<Editor> was created without expected prop 'pattern'");
     		}
     	}

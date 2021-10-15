@@ -25,6 +25,13 @@ function createMapStore(initial) {
 }
 
 export const abbrv = createMapStore({
+  ml: 'ml',
+  mc: 'mc',
+  ms: 'ms',
+  bs: 'bs',
+  db: 'db',
+  aug: 'aug',
+  dim: 'dim'
 });
 export const colors = createMapStore({
   grape: "#bf4f8e",
