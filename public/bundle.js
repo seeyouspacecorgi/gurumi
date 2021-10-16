@@ -3770,7 +3770,7 @@ var app = (function () {
     					listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[6]),
     					listen_dev(textarea, "scroll", /*update_scroll*/ ctx[3], false, false, false),
     					listen_dev(textarea, "change", /*update_scroll*/ ctx[3], false, false, false),
-    					listen_dev(textarea, "blur", /*blur_handler*/ ctx[4], false, false, false)
+    					listen_dev(textarea, "input", /*input_handler*/ ctx[4], false, false, false)
     				];
 
     				mounted = true;
@@ -3821,7 +3821,7 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<TextArea> was created with unknown prop '${key}'`);
     	});
 
-    	function blur_handler(event) {
+    	function input_handler(event) {
     		bubble.call(this, $$self, event);
     	}
 
@@ -3859,7 +3859,7 @@ var app = (function () {
     		styled,
     		output,
     		update_scroll,
-    		blur_handler,
+    		input_handler,
     		output_1_binding,
     		textarea_input_handler
     	];
@@ -3899,7 +3899,8 @@ var app = (function () {
 
     const file$7 = "components\\ErrorBox.svelte";
 
-    function create_fragment$8(ctx) {
+    // (5:0) {#if text}
+    function create_if_block$2(ctx) {
     	let div;
     	let t0;
     	let t1;
@@ -3909,23 +3910,68 @@ var app = (function () {
     			div = element("div");
     			t0 = text("(⊙﹏⊙) ");
     			t1 = text(/*text*/ ctx[0]);
-    			add_location(div, file$7, 4, 0, 54);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    			attr_dev(div, "class", "svelte-82chr5");
+    			add_location(div, file$7, 5, 2, 68);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     			append_dev(div, t0);
     			append_dev(div, t1);
     		},
-    		p: function update(ctx, [dirty]) {
+    		p: function update(ctx, dirty) {
     			if (dirty & /*text*/ 1) set_data_dev(t1, /*text*/ ctx[0]);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$2.name,
+    		type: "if",
+    		source: "(5:0) {#if text}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$8(ctx) {
+    	let if_block_anchor;
+    	let if_block = /*text*/ ctx[0] && create_if_block$2(ctx);
+
+    	const block = {
+    		c: function create() {
+    			if (if_block) if_block.c();
+    			if_block_anchor = empty();
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			if (if_block) if_block.m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (/*text*/ ctx[0]) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+    				} else {
+    					if_block = create_if_block$2(ctx);
+    					if_block.c();
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    				}
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
+    			}
     		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
+    			if (if_block) if_block.d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
     		}
     	};
 
@@ -4008,11 +4054,11 @@ var app = (function () {
     	let current;
 
     	function textarea_raw_binding(value) {
-    		/*textarea_raw_binding*/ ctx[4](value);
+    		/*textarea_raw_binding*/ ctx[5](value);
     	}
 
     	function textarea_styled_binding(value) {
-    		/*textarea_styled_binding*/ ctx[5](value);
+    		/*textarea_styled_binding*/ ctx[6](value);
     	}
 
     	let textarea_props = {};
@@ -4028,8 +4074,12 @@ var app = (function () {
     	textarea = new TextArea({ props: textarea_props, $$inline: true });
     	binding_callbacks.push(() => bind(textarea, 'raw', textarea_raw_binding));
     	binding_callbacks.push(() => bind(textarea, 'styled', textarea_styled_binding));
-    	textarea.$on("blur", /*parse*/ ctx[2]);
-    	errorbox = new ErrorBox({ $$inline: true });
+    	textarea.$on("input", /*parse*/ ctx[3]);
+
+    	errorbox = new ErrorBox({
+    			props: { text: /*error*/ ctx[2] },
+    			$$inline: true
+    		});
 
     	const block = {
     		c: function create() {
@@ -4043,10 +4093,10 @@ var app = (function () {
     			create_component(textarea.$$.fragment);
     			t4 = space();
     			create_component(errorbox.$$.fragment);
-    			add_location(h20, file$8, 51, 2, 1741);
-    			add_location(h21, file$8, 52, 2, 1764);
+    			add_location(h20, file$8, 58, 2, 1899);
+    			add_location(h21, file$8, 59, 2, 1922);
     			attr_dev(section, "class", "svelte-10izwjw");
-    			add_location(section, file$8, 50, 0, 1728);
+    			add_location(section, file$8, 57, 0, 1886);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4078,6 +4128,9 @@ var app = (function () {
     			}
 
     			textarea.$set(textarea_changes);
+    			const errorbox_changes = {};
+    			if (dirty & /*error*/ 4) errorbox_changes.text = /*error*/ ctx[2];
+    			errorbox.$set(errorbox_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -4114,6 +4167,7 @@ var app = (function () {
     	let { pattern } = $$props;
     	let input_raw = '6ms \n 6aug \n 2ms (1ms 1aug) * 12 3ms\n 13 ms 12ms';
     	let input_styled = '';
+    	let error = '';
 
     	const makepretty = _ => {
     		if (!pattern) return;
@@ -4152,11 +4206,19 @@ var app = (function () {
 
     	const parse = async _ => {
     		console.log("start parse");
-    		let parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
-    		parser.feed(input_raw);
-    		$$invalidate(3, pattern = await interpret(parser.results[0]));
+    		$$invalidate(2, error = '');
+
+    		try {
+    			let parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
+    			parser.feed(input_raw);
+    			$$invalidate(4, pattern = await interpret(parser.results[0]));
+    		} catch(err) {
+    			$$invalidate(2, error = 'Invalid syntax : the parser is confused');
+    		} finally {
+    			makepretty();
+    		}
+
     		console.log(pattern);
-    		makepretty();
     	};
 
     	const writable_props = ['pattern'];
@@ -4176,7 +4238,7 @@ var app = (function () {
     	}
 
     	$$self.$$set = $$props => {
-    		if ('pattern' in $$props) $$invalidate(3, pattern = $$props.pattern);
+    		if ('pattern' in $$props) $$invalidate(4, pattern = $$props.pattern);
     	};
 
     	$$self.$capture_state = () => ({
@@ -4188,14 +4250,16 @@ var app = (function () {
     		pattern,
     		input_raw,
     		input_styled,
+    		error,
     		makepretty,
     		parse
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('pattern' in $$props) $$invalidate(3, pattern = $$props.pattern);
+    		if ('pattern' in $$props) $$invalidate(4, pattern = $$props.pattern);
     		if ('input_raw' in $$props) $$invalidate(0, input_raw = $$props.input_raw);
     		if ('input_styled' in $$props) $$invalidate(1, input_styled = $$props.input_styled);
+    		if ('error' in $$props) $$invalidate(2, error = $$props.error);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -4205,6 +4269,7 @@ var app = (function () {
     	return [
     		input_raw,
     		input_styled,
+    		error,
     		parse,
     		pattern,
     		textarea_raw_binding,
@@ -4215,7 +4280,7 @@ var app = (function () {
     class Editor extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$9, create_fragment$9, safe_not_equal, { pattern: 3 });
+    		init(this, options, instance$9, create_fragment$9, safe_not_equal, { pattern: 4 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -4227,7 +4292,7 @@ var app = (function () {
     		const { ctx } = this.$$;
     		const props = options.props || {};
 
-    		if (/*pattern*/ ctx[3] === undefined && !('pattern' in props)) {
+    		if (/*pattern*/ ctx[4] === undefined && !('pattern' in props)) {
     			console_1$1.warn("<Editor> was created without expected prop 'pattern'");
     		}
     	}

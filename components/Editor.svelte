@@ -7,6 +7,7 @@
   export let pattern;
   let input_raw = '';
   let input_styled = '';
+  let error = '';
 
   const makepretty = _ => {
     if (!pattern) return;
@@ -38,18 +39,26 @@
 
   const parse = async _ => {
     console.log("start parse")
-    let parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
-    parser.feed(input_raw);
-    pattern = await interpret(parser.results[0]);
-    syntax();
-    makepretty();
+    error = '';
+    try {
+      let parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
+      parser.feed(input_raw);
+      pattern = await interpret(parser.results[0]);
+    } catch (err) {
+      error = 'Invalid syntax : the parser is confused';
+    } finally {
+      makepretty();
+    }
+    console.log(pattern);
   };
 
 </script>
 
 <section>
-  <TextArea bind:raw={input_raw} bind:styled={input_styled} on:blur={parse}/>
+  <TextArea bind:raw={input_raw} bind:styled={input_styled} on:input={parse}/>
+  <ErrorBox text={error}/>
 </section>
+
 <style>
   section {
     display: flex;
