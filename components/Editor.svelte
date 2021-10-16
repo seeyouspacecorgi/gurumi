@@ -1,7 +1,7 @@
 <script>
   import nearley from "nearley";
   import grammar from "../scripts/grammar.js";
-  import {interpret} from "../scripts/interpretor.js";
+  import { interpret } from "../scripts/interpretor.js";
   import TextArea from "./Inputs/TextArea.svelte";
 
   export let pattern;
