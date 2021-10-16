@@ -6,6 +6,7 @@ import postcssImport from 'postcss-import';
 import autoprefixer from 'autoprefixer';
 import sveltePreprocess from 'svelte-preprocess';
 
+
 const production = !process.env.ROLLUP_WATCH;
 
 export default {
@@ -23,7 +24,7 @@ export default {
         postcss:{
           plugins: [
             autoprefixer(),
-            postcssImport()
+            postcssImport(),
           ]
         },
       }),
