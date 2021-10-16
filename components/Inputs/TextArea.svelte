@@ -24,7 +24,7 @@
   }
   textarea,
   output {
-    padding: 1em;
+    padding: 1.25rem 3rem;
     overflow-y: auto;
     /* reset */
     line-height: inherit;
@@ -51,5 +51,25 @@
     right: 0;
     bottom: 0;
     color: transparent;
+    counter-reset: line-number;
+  }
+  :global(output span) {
+    display: block;
+    position: relative;
+    counter-increment: line-number;
+  }
+  :global(output span::before) {
+    content: '#'counter(line-number);
+    position: absolute;
+    left: -2rem;
+    color: initial;
+    opacity: 0.2;
+  }
+  :global(output span::after) {
+    content: '('var(--sts)' m)';
+    position: absolute;
+    right: -2rem;
+    color: initial;
+    opacity: 0.2;
   }
 </style>
